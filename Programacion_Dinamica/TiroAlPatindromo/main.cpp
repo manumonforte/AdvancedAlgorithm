@@ -1,62 +1,108 @@
-﻿// Manuel Monforte Escobar
-// TAIS62
+﻿//Manuel Monforte 
+//TAIS62
 
 
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <string>
-#include "Matriz.h"
 #include <algorithm>
+#include "Matriz.h"
+#include <vector>
 
-// Resuelve un caso de prueba, leyendo de la entrada la
-// configuración, y escribiendo la respuesta
-bool resuelveCaso() {
-	// leer los datos de la entrada
-	std::string palabra;
-	std::cin >> palabra;
-	if (!std::cin)
-		return false;
+using namespace std;
 
-	Matriz<int>patindromo(palabra.length() + 1, palabra.length() + 1, 0);
+
+string patindromo(string letras) {
 	
-	for (int i = 1; i <= palabra.length(); i++){
-		for (int j = 1; j <= palabra.length(); j++){
-			if (palabra[i-1] != palabra[palabra.length() - j])
-				patindromo[i][j] = std::max(patindromo[i][j - 1],patindromo[i-1][j]);
-			else patindromo[i][j] = patindromo[i - 1][j - 1]+1
-				;
+	int N = letras.size() - 1;
+
+	//creamos matriz de N x N
+	Matriz<int> tabla(N + 1, N + 1, 0);
+
+	//rellenamos la diagonal con 1 ya que si los indices son iguales el tam del palindromo es 1
+	for (int i = 1; i <= N - 1; i++)
+		tabla[i][i] = 1;
+
+	for (int d = 1; d <= N - 1; d++)
+		for (int i = 1; i <= N - d; i++){
+			int j = i + d;
+			if (letras[i] == letras[j])
+				tabla[i][j] = 2 + tabla[i + 1][j - 1];
+			else
+				tabla[i][j] = max(tabla[i + 1][j], tabla[i][j - 1]);
 		}
+
+	int tam = tabla[1][N];
+	
+	std::string sol(tam + 1, ' ');
+
+	//creamos indice de palabra original
+	int origenIni = 1;
+	int origenFin = N;
+	//creamos indice palabrta final
+	int solIni = 1;
+	int solFin = tam;
+
+	while (tam > 0) {
+		//si las letras son iguales las colocamos y disminuimos el tam
+		if (letras[origenIni] == letras[origenFin]) {
+			sol[solIni] = letras[origenIni];
+			sol[solFin] = letras[origenFin];
+			origenIni++;
+			origenFin--;
+			solIni++;
+			solFin--;
+			tam -= 2;
+		}
+		
+		else if (letras[origenIni] != letras[origenFin]) {
+			if (tabla[origenIni][origenFin - 1] > tabla[origenIni + 1][origenFin])
+				origenFin--;
+			else origenIni++;
+		}
+		else if (tam == 1) {
+			sol[solIni] = letras[origenIni];
+			tam--;
+		}
+		
 	}
 
-	// escribir sol
-	std::cout << patindromo[palabra.length()][palabra.length()] << "\n";
-	//escribimos palabra
-	for (int i = 1; i <= palabra.length(); i++){
-		if (patindromo[i - 1][i-1] !=patindromo[i][i]) std::cout << palabra[i - 1];
-	}
-	std::cout << "\n";
-	return true;
-
+	return sol.substr(1,sol.size()-1);
 }
 
+bool resuelveCaso() {
+
+	string palabra;
+	cin >> palabra;
+
+	if (!cin) return false;
+
+	string sol = "";
+	if (palabra.size() == 1) {
+		cout << palabra << endl;
+	}
+	else {
+		palabra = " " + palabra;
+		sol = patindromo(palabra);
+		cout << sol << endl;
+	}
+
+	return true;
+}
+
+
 int main() {
-	// Para la entrada por fichero.
-	// Comentar para acepta el reto
+
 #ifndef DOMJUDGE
 	std::ifstream in("datos.txt");
-	auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
-#endif 
+	auto cinbuf = std::cin.rdbuf(in.rdbuf());
+#endif
 
+	while (resuelveCaso());
 
-	while (resuelveCaso())
-		;
-
-
-	// Para restablecer entrada. Comentar para acepta el reto
-#ifndef DOMJUDGE // para dejar todo como estaba al principio
+#ifndef DOMJUDGE
 	std::cin.rdbuf(cinbuf);
-	system("PAUSE");
+	system("pause");
 #endif
 
 	return 0;
