@@ -8,11 +8,11 @@
 #include <string>
 #include <algorithm>
 /*
-	aibofobia(i,j) = minimo de letras a anadir para que la palabra situada entre 0.. i e j..palabra.size() sea
-	palindromo
+aibofobia(i,j) = minimo de letras a anadir para que la palabra situada entre 0.. i e j..palabra.size() sea
+palindromo
 
-		aibofobia(i,j) = aibofobia(i-1,j+1) letra[i]==letra[j]
-						 (aibofobia(i-1,j),aibofobia(i,j+1))+1
+aibofobia(i,j) = aibofobia(i+1,j-1) letra[i]==letra[j]
+min(aibofobia(i+1,j)1,aibofobia(i,j1))+1
 
 */
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -24,22 +24,22 @@ bool resuelveCaso() {
 	if (!std::cin)
 		return false;
 	palabra = ' ' + palabra;
-	int N  = palabra.size() - 1;
-	Matriz<int>aibofobia(N + 1, N + 2, 0);
+	int N = palabra.size() - 1;
+	Matriz<int>aibofobia(N + 1, N + 1, 0);
 	// escribir sol
 
-	for (int i = 1; i <= N; i++){
-		for (int j = N; j >=1; j--){
+	for (int d = 1; d <= N - 1; d++){
+		for (int i = 1; i <= N - d; i++){
+			int j = i + d;
 			if (palabra[i] == palabra[j])
-				aibofobia[i][j] = aibofobia[i - 1][j + 1];
+				aibofobia[i][j] = aibofobia[i + 1][j - 1];
 			else
-				aibofobia[i][j] = std::min(aibofobia[i - 1][j], aibofobia[i][j + 1])+1;
+				aibofobia[i][j] = std::min(aibofobia[i + 1][j], aibofobia[i][j - 1]) + 1;
 		}
 	}
 
-	std::cout << aibofobia[N][1] << "\n";
+	std::cout << aibofobia[1][N] << "\n";
 	return true;
-
 }
 
 int main() {
