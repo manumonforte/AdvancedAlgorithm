@@ -7,10 +7,10 @@
 #include <fstream>
 #include "Grafo.h"
 /*
-Para comprobar si es conexo basta con aplicar DFS y comprobar que el numerod e nodos recorridos
+Para comprobar si es conexo basta con aplicar DFS y comprobar que el numero de nodos recorridos
 es igual al numero de vertices del grafo
 
-Para comprobar que no hay ciclo basta con ver que no tiene mas de N-1 vertices
+Para comprobar que no hay ciclo basta con ver que no tiene mas de V-1 aristas
 
 Coste de la solucion--> Aplicacion de DFS--> V+E
 */
